@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Đại Cương Hóa Phân Tích</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&family=Source+Serif+4:ital,wght@0,300;0,600;1,300&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink:       #1a1a2e;
+    --bg:        #f7f6f2;
+    --paper:     #ffffff;
+    --accent:    #2563a8;
+    --accent2:   #c0392b;
+    --accent3:   #27ae60;
+    --muted:     #6b7280;
+    --rule:      #dde1e9;
+    --highlight: #eef4ff;
+    --tag-bg:    #e8f0fe;
+  }
+
+  body {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.7;
+    font-size: 15px;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--ink);
+    display: flex; align-items: center; gap: 0;
+    overflow-x: auto;
+    border-bottom: 3px solid var(--accent);
+  }
+  nav a {
+    color: #cbd5e1; text-decoration: none;
+    padding: 14px 18px; font-size: 12px; font-weight: 600;
+    letter-spacing: .06em; text-transform: uppercase;
+    white-space: nowrap; border-right: 1px solid #2d3748;
+    transition: background .15s, color .15s;
+  }
+  nav a:hover { background: var(--accent); color: #fff; }
+
+  /* ── HERO ── */
+  .hero {
+    background: var(--ink);
+    color: #fff;
+    padding: 72px 48px 56px;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: 'HPT'; position: absolute; right: -20px; top: -30px;
+    font-size: 200px; font-weight: 700; color: rgba(255,255,255,.04);
+    font-family: 'Source Serif 4', serif; pointer-events: none;
+  }
+  .hero-label {
+    font-size: 11px; font-weight: 700; letter-spacing: .18em;
+    text-transform: uppercase; color: #93c5fd; margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-family: 'Source Serif 4', serif;
+    font-size: clamp(2rem, 5vw, 3.6rem);
+    font-weight: 600; line-height: 1.15; margin-bottom: 28px;
+  }
+  .hero-objectives {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
+    gap: 14px; margin-top: 32px;
+  }
+  .hero-obj {
+    background: rgba(255,255,255,.07);
+    border-left: 3px solid var(--accent);
+    padding: 14px 16px; border-radius: 0 6px 6px 0;
+    font-size: 13.5px; line-height: 1.5;
+  }
+
+  /* ── LAYOUT ── */
+  main { max-width: 1100px; margin: 0 auto; padding: 0 24px 80px; }
+
+  /* ── SECTION ── */
+  .section {
+    margin-top: 64px;
+    scroll-margin-top: 60px;
+  }
+  .section-header {
+    display: flex; align-items: center; gap: 14px;
+    border-bottom: 2px solid var(--rule);
+    padding-bottom: 12px; margin-bottom: 32px;
+  }
+  .section-num {
+    background: var(--accent); color: #fff;
+    font-size: 11px; font-weight: 700; letter-spacing: .1em;
+    padding: 4px 10px; border-radius: 4px;
+  }
+  .section-header h2 {
+    font-family: 'Source Serif 4', serif;
+    font-size: 1.7rem; font-weight: 600;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 28px 32px;
+    margin-bottom: 20px;
+  }
+  .card h3 {
+    font-size: 1rem; font-weight: 700; color: var(--accent);
+    margin-bottom: 12px; text-transform: uppercase; letter-spacing: .05em;
+    font-size: 12px;
+  }
+  .card p { margin-bottom: 10px; }
+
+  /* ── ION TABLE ── */
+  .ion-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .ion-table th {
+    background: var(--ink); color: #fff;
+    padding: 10px 14px; text-align: left; font-weight: 600;
+  }
+  .ion-table td { padding: 9px 14px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  .ion-table tr:nth-child(even) td { background: #f9fafb; }
+  .ion-table .group-cell {
+    font-weight: 700; color: var(--accent2); text-align: center; font-size: 1rem;
+  }
+  .ion-table .reagent { font-family: monospace; color: var(--accent); }
+  .tag {
+    display: inline-block; background: var(--tag-bg); color: var(--accent);
+    font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 100px;
+    margin: 2px;
+  }
+
+  /* ── CLASSIFY GRID ── */
+  .classify-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+    gap: 14px; margin-top: 4px;
+  }
+  .classify-card {
+    background: var(--paper); border: 1px solid var(--rule);
+    border-top: 4px solid var(--accent);
+    border-radius: 8px; padding: 18px 20px;
+  }
+  .classify-card h4 { font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+  .classify-card .range { font-size: 20px; font-weight: 700; color: var(--accent); }
+  .classify-card .unit { font-size: 11px; color: var(--muted); }
+
+  /* ── METHOD BLOCK ── */
+  .method-block { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 8px; }
+  .method-pill {
+    background: var(--highlight); border: 1px solid #c7d9f5;
+    border-radius: 8px; padding: 14px 20px; flex: 1; min-width: 200px;
+  }
+  .method-pill .label { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+  .method-pill .name { font-size: 15px; font-weight: 700; margin-top: 4px; }
+  .method-pill .desc { font-size: 13px; color: var(--muted); margin-top: 6px; line-height: 1.5; }
+
+  /* ── INSTRUMENT TABLE ── */
+  .inst-table { width:100%; border-collapse:collapse; font-size:13.5px; }
+  .inst-table th { background: #1e3a5f; color:#fff; padding:10px 16px; text-align:left; }
+  .inst-table td { padding:9px 16px; border-bottom:1px solid var(--rule); }
+  .inst-table tr:hover td { background: var(--highlight); }
+  .phys-val { font-family: monospace; color: var(--accent2); font-weight: 700; }
+
+  /* ── PROCESS ── */
+  .process { display: flex; flex-direction: column; gap: 0; }
+  .process-step {
+    display: flex; gap: 20px; align-items: flex-start;
+    padding: 20px 0; border-bottom: 1px dashed var(--rule);
+    position: relative;
+  }
+  .process-step:last-child { border-bottom: none; }
+  .step-num {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 14px; flex-shrink: 0; margin-top: 2px;
+  }
+  .step-content h4 { font-weight: 700; margin-bottom: 4px; }
+  .step-content ul { padding-left: 16px; font-size: 13.5px; color: var(--muted); }
+  .step-content ul li { margin-bottom: 3px; }
+
+  /* ── STATS SECTION ── */
+  .formula-box {
+    background: #0f172a; color: #e2e8f0;
+    border-radius: 10px; padding: 24px 28px; margin: 16px 0;
+    font-family: monospace; font-size: 14px; overflow-x: auto;
+  }
+  .formula-box .formula-row { margin-bottom: 10px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+  .formula-box .sym { color: #7dd3fc; font-weight: 700; }
+  .formula-box .eq { color: #94a3b8; }
+  .formula-box .excel { background:#1e3a5f; color:#93c5fd; padding:2px 8px; border-radius:4px; font-size:12px; }
+
+  .error-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
+    gap: 16px; margin-top: 8px;
+  }
+  .error-card {
+    border-radius: 10px; padding: 22px 24px;
+    border-left: 5px solid;
+  }
+  .error-card.random { background: #fef3c7; border-color: #f59e0b; }
+  .error-card.systematic { background: #fee2e2; border-color: var(--accent2); }
+  .error-card.gross { background: #d1fae5; border-color: var(--accent3); }
+  .error-card h4 { font-weight: 700; margin-bottom: 8px; font-size: 14px; }
+  .error-card p { font-size: 13px; line-height: 1.55; }
+
+  .test-table { width:100%; border-collapse:collapse; font-size:13px; }
+  .test-table th { background: #1e3a5f; color:#fff; padding:8px 12px; text-align:center; }
+  .test-table td { padding:7px 12px; border:1px solid var(--rule); text-align:center; }
+  .test-table .k-col { font-weight:700; color: var(--accent); background: var(--highlight); }
+
+  .decision-box {
+    display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px;
+  }
+  .decision {
+    flex: 1; min-width: 200px; padding: 14px 18px; border-radius: 8px;
+    font-size: 13.5px; font-weight: 600;
+  }
+  .decision.keep { background: #d1fae5; border: 1px solid #6ee7b7; color: #065f46; }
+  .decision.reject { background: #fee2e2; border: 1px solid #fca5a5; color: #991b1b; }
+
+  /* ── PROGRAM TABLE ── */
+  .prog-table { width:100%; border-collapse:collapse; font-size:13.5px; }
+  .prog-table th { background: var(--ink); color:#fff; padding:10px 16px; text-align:left; }
+  .prog-table td { padding:9px 16px; border-bottom:1px solid var(--rule); }
+  .prog-table tr:nth-child(even) td { background:#f9fafb; }
+  .gv { font-style: italic; color: var(--muted); font-size: 12.5px; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--ink); color: #94a3b8;
+    text-align: center; padding: 28px; font-size: 12.5px;
+    margin-top: 0;
+  }
+
+  /* ── STEP LIST ── */
+  .step-list { counter-reset: step; list-style: none; padding: 0; }
+  .step-list li {
+    counter-increment: step;
+    display: flex; gap: 14px; align-items: flex-start;
+    padding: 12px 0; border-bottom: 1px solid var(--rule);
+    font-size: 14px;
+  }
+  .step-list li::before {
+    content: counter(step);
+    background: var(--accent); color: #fff;
+    width: 26px; height: 26px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 12px; flex-shrink: 0; margin-top: 2px;
+  }
+
+  .note { font-size: 12.5px; color: var(--muted); font-style: italic; margin-top: 6px; }
+
+  @media (max-width: 640px) {
+    .hero { padding: 40px 20px; }
+    main { padding: 0 14px 60px; }
+    .card { padding: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#lich-su">Lịch Sử</a>
+  <a href="#khai-niem">Khái Niệm</a>
+  <a href="#chuc-nang">Chức Năng</a>
+  <a href="#phan-loai">Phân Loại</a>
+  <a href="#phuong-phap">Phương Pháp</a>
+  <a href="#quy-trinh">Quy Trình</a>
+  <a href="#xu-ly">Xử Lý Số Liệu</a>
+  <a href="#chuong-trinh">Chương Trình</a>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-label">Môn học · Hóa Học Phân Tích</div>
+  <h1>Đại Cương<br>Hóa Phân Tích</h1>
+  <div class="hero-objectives">
+    <div class="hero-obj">Trình bày được đối tượng, chức năng và phân loại của hóa học phân tích.</div>
+    <div class="hero-obj">Nêu được nội dung của hóa học phân tích.</div>
+    <div class="hero-obj">Giải thích được các bước thực hiện của quy trình phân tích.</div>
+  </div>
+</header>
+
+<main>
+
+<!-- ── LỊCH SỬ ── -->
+<section class="section" id="lich-su">
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <h2>Lịch Sử</h2>
+  </div>
+
+  <div class="card">
+    <h3>Phân tích hệ thống các nguyên tố — Justus von Liebig (Đức, 1803–1873)</h3>
+    <p>Hệ thống phân loại các cation theo nhóm thuốc thử đặc trưng:</p>
+    <table class="ion-table" style="margin-top:14px">
+      <thead>
+        <tr><th>Nhóm</th><th>Ion</th><th>Thuốc thử nhóm</th><th>Đặc điểm</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="group-cell">I</td><td>Ag⁺, Pb²⁺, Hg₂²⁺</td><td class="reagent">HCl 6M</td><td>Tủa clorid màu trắng, không tan / HNO₃</td></tr>
+        <tr><td class="group-cell">II</td><td>Ba²⁺, Sr²⁺, Ca²⁺</td><td class="reagent">H₂SO₄ 3M</td><td>Tủa sulfat, không tan / acid vô cơ, a. acetic</td></tr>
+        <tr><td class="group-cell">III</td><td>Al³⁺, Cr³⁺, Zn²⁺</td><td class="reagent">NaOH 3M</td><td>Hydroxyt lưỡng tính, tan / kiềm dư</td></tr>
+        <tr><td class="group-cell">IV</td><td>Fe³⁺, Mn²⁺, Mg²⁺, Bi³⁺</td><td class="reagent">NaOH + H₂O₂</td><td>Hydroxyt không tan / kiềm dư</td></tr>
+        <tr><td class="group-cell">V</td><td>Cu²⁺, Co²⁺, Hg²⁺</td><td class="reagent">NH₄OH</td><td>Hydroxyt, tạo phức tan / NH₄OH dư</td></tr>
+        <tr><td class="group-cell">VI</td><td>Na⁺, K⁺, NH₄⁺</td><td>—</td><td>Không có thuốc thử nhóm</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Phân loại anion</h3>
+    <table class="ion-table">
+      <thead>
+        <tr><th>Nhóm</th><th>Ion</th><th>Thuốc thử</th><th>Đặc điểm</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="group-cell">I</td><td>Cl⁻, Br⁻, I⁻, SCN⁻</td><td class="reagent">AgNO₃/HNO₃</td><td>Tủa</td></tr>
+        <tr><td class="group-cell">II</td><td>SO₄²⁻, CO₃²⁻, PO₄³⁻, BO₂⁻, C₂O₄²⁻</td><td class="reagent">BaCl₂</td><td>Tủa trắng tan/acid trừ BaSO₄</td></tr>
+        <tr><td class="group-cell">III</td><td>NO₃⁻, MnO₄⁻</td><td>—</td><td>Không có thuốc thử nhóm</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Phát triển hiện đại</h3>
+    <p>Sau 1900, hóa phân tích phát triển mạnh nhờ vào thành tựu của <strong>Phân tích Công cụ</strong> (Instrumental Analysis), sử dụng các nguyên lý vật lý và hóa lý để đo lường chính xác hơn.</p>
+  </div>
+</section>
+
+<!-- ── KHÁI NIỆM ── -->
+<section class="section" id="khai-niem">
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <h2>Khái Niệm</h2>
+  </div>
+
+  <div class="card">
+    <p><strong>Hóa phân tích</strong> là khoa học nghiên cứu về các phương pháp xác định <em>thành phần hóa học</em> của chất và <em>cấu trúc</em> của các hợp phần có trong chất phân tích.</p>
+  </div>
+
+  <div class="method-block">
+    <div class="method-pill">
+      <div class="label">Định tính</div>
+      <div class="name">Qualitative Analysis</div>
+      <div class="desc">Xác định xem chất phân tích được cấu tạo bởi những nguyên tố nào, nhóm chức nào, và cách sắp xếp, liên kết của chúng (phân tích cấu trúc).</div>
+    </div>
+    <div class="method-pill">
+      <div class="label">Định lượng</div>
+      <div class="name">Quantitative Analysis</div>
+      <div class="desc">Xác định thành phần định lượng của các nguyên tố, các hợp chất hóa học trong chất phân tích.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CHỨC NĂNG ── -->
+<section class="section" id="chuc-nang">
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <h2>Chức Năng Hóa Phân Tích Hiện Đại</h2>
+  </div>
+
+  <div class="card">
+    <div class="process">
+      <div class="process-step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h4>Giải quyết vấn đề chung</h4>
+          <ul>
+            <li>Phát triển và hoàn thiện luận thuyết về các phương pháp phân tích</li>
+          </ul>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h4>Nghiên cứu các phương pháp phân tích hóa học</h4>
+          <ul>
+            <li>Định tính và định lượng một hệ thống chưa biết</li>
+          </ul>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h4>Giải quyết nhiệm vụ cụ thể</h4>
+          <ul>
+            <li>Phát triển sản phẩm</li>
+            <li>Kiểm tra chất lượng sản phẩm</li>
+            <li>Nghiên cứu y học và lâm sàng</li>
+            <li>Kiểm soát các chất ô nhiễm</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PHÂN LOẠI ── -->
+<section class="section" id="phan-loai">
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <h2>Phân Loại</h2>
+  </div>
+
+  <div class="card">
+    <h3>1. Theo thể tích và khối lượng chất phân tích</h3>
+    <div class="classify-grid">
+      <div class="classify-card">
+        <h4>Phân tích thô</h4>
+        <div class="range">0,1 – 1 g</div>
+        <div class="unit">1 – 100 ml</div>
+      </div>
+      <div class="classify-card" style="border-top-color:#27ae60">
+        <h4>Phân tích bán vi lượng</h4>
+        <div class="range" style="color:#27ae60">0,01 – 0,1 g</div>
+        <div class="unit">0,1 – 0,3 ml</div>
+      </div>
+      <div class="classify-card" style="border-top-color:#f59e0b">
+        <h4>Phân tích vi lượng</h4>
+        <div class="range" style="color:#f59e0b">0,001 – 0,01 g</div>
+        <div class="unit">0,01 – 0,1 ml</div>
+      </div>
+      <div class="classify-card" style="border-top-color:#c0392b">
+        <h4>Phân tích siêu vi lượng</h4>
+        <div class="range" style="color:#c0392b">10⁻⁶ – 10⁻¹² g</div>
+        <div class="unit">10⁻⁶ – 10⁻³ ml</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>2. Theo bản chất hợp phần của chất xác định</h3>
+    <ul style="padding-left:20px; line-height:2">
+      <li><strong>Phân tích đồng vị:</strong> ¹⁴C, ¹⁸O, hoặc cấu trúc HH (¹³C NMR)</li>
+      <li><strong>Phân tích nguyên tố:</strong> CₓHᵧO_zNₜ, %C, %H…</li>
+      <li><strong>Phân tích phân tử:</strong> sắc ký</li>
+      <li><strong>Phân tích nhóm chức:</strong> phản ứng, FTIR</li>
+      <li><strong>Phân tích chất</strong></li>
+      <li><strong>Phân tích pha:</strong> tách và xác định các hệ dị thể (ZnS + ZnO/khoáng)</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>3. Theo bản chất phương pháp</h3>
+    <div class="method-block">
+      <div class="method-pill">
+        <div class="label">HPT 1 — Cổ điển</div>
+        <div class="name">Phân tích "ướt"</div>
+        <div class="desc">Phương pháp phân tích khối lượng (Gravimetry) &amp; phân tích thể tích (Titrimetry).</div>
+      </div>
+      <div class="method-pill" style="background:#fff7ed; border-color:#fed7aa">
+        <div class="label">HPT 2 — Hiện đại</div>
+        <div class="name">Phân tích công cụ</div>
+        <div class="desc">Instrumental Analysis — đo lường các đặc tính vật lý như độ hấp thu quang, điện thế, khối phổ…</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PHƯƠNG PHÁP ── -->
+<section class="section" id="phuong-phap">
+  <div class="section-header">
+    <span class="section-num">05</span>
+    <h2>Các Phương Pháp Phân Tích</h2>
+  </div>
+
+  <div class="card">
+    <h3>Phân tích công cụ — Kỹ thuật và đại lượng đo</h3>
+    <table class="inst-table" style="margin-top:12px">
+      <thead>
+        <tr><th>Kỹ thuật</th><th>Đặc điểm được đo</th><th>Đại lượng vật lý</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Quang phổ (Spectrometry)</td><td>Cường độ sóng điện từ bị hấp thu hay phát xạ bởi chất phân tích</td><td class="phys-val">A, I_F</td></tr>
+        <tr><td>Điện hóa (Electrochemical)</td><td>Tính chất điện (cường độ, điện thế, điện lượng) của dung dịch</td><td class="phys-val">E (V, mV), I (A, mA)</td></tr>
+        <tr><td>Khối phổ (Mass Spectrometry)</td><td>Số lượng phân mảnh ion hình thành từ chất phân tích</td><td class="phys-val">%</td></tr>
+        <tr><td>Sắc ký / Điện di</td><td>Đặc tính lý hóa của chất phân tích sau khi tách bằng vận tốc dịch chuyển</td><td class="phys-val">Height, Area</td></tr>
+        <tr><td>Nhiệt học (Thermometry)</td><td>Đặc tính lý hóa khi đun nóng và làm nguội</td><td class="phys-val">ΔG, ΔH, Calory</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Phân tích định lượng HPT 2 — Đại lượng đo lường</h3>
+    <div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:10px">
+      <span class="tag">Độ dẫn</span>
+      <span class="tag">Thế điện cực</span>
+      <span class="tag">Độ hấp thu ánh sáng</span>
+      <span class="tag">Cường độ phát xạ ánh sáng</span>
+      <span class="tag">Khối lượng phân tử / ion</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── QUY TRÌNH ── -->
+<section class="section" id="quy-trinh">
+  <div class="section-header">
+    <span class="section-num">06</span>
+    <h2>Quy Trình Phân Tích Hóa Học</h2>
+  </div>
+
+  <div class="card">
+    <div class="process">
+      <div class="process-step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h4>Xác định đối tượng</h4>
+          <ul>
+            <li>Xác định rõ mục tiêu: KTCL, tinh khiết…</li>
+            <li>Yêu cầu phân tích: định tính hay định lượng</li>
+          </ul>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h4>Lựa chọn phương pháp</h4>
+          <ul>
+            <li>Cỡ mẫu phân tích</li>
+            <li>Phương tiện, yêu cầu kỹ thuật</li>
+          </ul>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h4>Lấy mẫu thử</h4>
+          <ul>
+            <li>"Ở đâu", "khi nào", "thế nào" lấy mẫu</li>
+          </ul>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h4>Xử lý mẫu thử</h4>
+          <ul>
+            <li>Tách các chất cản trở</li>
+            <li>Tách chất phân tích có tính định lượng</li>
+          </ul>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <h4>Tiến hành đo</h4>
+          <ul>
+            <li>Phương tiện phù hợp</li>
+            <li>Tuân theo SOP</li>
+          </ul>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="step-num">6</div>
+        <div class="step-content">
+          <h4>Xử lý kết quả</h4>
+          <ul>
+            <li>Thống kê mô tả (Descriptive statistics)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="step-num">7</div>
+        <div class="step-content">
+          <h4>Đánh giá quy trình</h4>
+          <ul>
+            <li>Tính đặc hiệu, độ đúng, độ chính xác</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── XỬ LÝ SỐ LIỆU ── -->
+<section class="section" id="xu-ly">
+  <div class="section-header">
+    <span class="section-num">07</span>
+    <h2>Xử Lý Số Liệu Phân Tích</h2>
+  </div>
+
+  <!-- Loại sai số -->
+  <div class="error-grid" style="margin-bottom:24px">
+    <div class="error-card random">
+      <h4>Sai số ngẫu nhiên (Random Error)</h4>
+      <p>Gây nên bởi nguyên nhân không xác định được. Ảnh hưởng đến <strong>độ chính xác</strong>. Hạn chế bằng cách tăng số lần phân tích và dùng thống kê mô tả.</p>
+    </div>
+    <div class="error-card systematic">
+      <h4>Sai số hệ thống (Systematic Error)</h4>
+      <p>Tuân theo quy luật, có thể phát hiện và loại trừ. Ảnh hưởng đến <strong>độ đúng</strong> của giá trị thực nghiệm.</p>
+    </div>
+    <div class="error-card gross">
+      <h4>Sai số thô (Gross Error)</h4>
+      <p>Giá trị khác xa trung bình. Loại bằng <strong>chuẩn Dixon (test Q)</strong> hoặc <strong>test T</strong>.</p>
+    </div>
+  </div>
+
+  <!-- Công thức -->
+  <div class="card">
+    <h3>1. Sai số ngẫu nhiên — Công thức thống kê</h3>
+    <div class="formula-box">
+      <div class="formula-row">
+        <span class="sym">X̄</span><span class="eq">=</span> Σxᵢ / n
+        <span style="margin-left:24px" class="excel">Excel: AVERAGE</span>
+      </div>
+      <div class="formula-row">
+        <span class="sym">S²</span><span class="eq">=</span> Σ(xᵢ − X̄)² / (n−1)
+        <span style="margin-left:24px" class="excel">Excel: VAR</span>
+      </div>
+      <div class="formula-row">
+        <span class="sym">SD</span><span class="eq">=</span> √[Σ(Xᵢ − X̄)² / (n−1)]
+        <span style="margin-left:24px" class="excel">Excel: STDEV</span>
+      </div>
+      <div class="formula-row">
+        <span class="sym">RSD% = CV</span><span class="eq">=</span> (SD / X̄) × 100%
+      </div>
+    </div>
+    <p class="note">Hệ số biến thiên (CV) dùng để đánh giá độ phân tán của dãy giá trị đo so với giá trị trung bình hoặc để so sánh độ chính xác giữa các dãy số liệu.</p>
+  </div>
+
+  <!-- Test T sai số hệ thống -->
+  <div class="card">
+    <h3>2. Xác định sai số hệ thống — Test T</h3>
+    <div class="formula-box">
+      <div class="formula-row">
+        <span class="sym">t_tn</span><span class="eq">=</span> (|X̄ − M| / SD) × √n
+      </div>
+    </div>
+    <div class="decision-box">
+      <div class="decision keep">t_tn &lt; t_lt : <strong>Không có</strong> sai số hệ thống</div>
+      <div class="decision reject">t_tn &gt; t_lt : <strong>Có</strong> sai số hệ thống</div>
+    </div>
+    <p class="note" style="margin-top:12px">Ví dụ: M = 3,110 mg → t_tn = 0,363 &lt; t_lt = 2,45 → <strong>không có sai số hệ thống</strong>.</p>
+  </div>
+
+  <!-- Bảng T -->
+  <div class="card">
+    <h3>Bảng giá trị t (Student) — k = n−1 bậc tự do</h3>
+    <div style="overflow-x:auto; margin-top:12px">
+      <table class="test-table">
+        <thead><tr><th>k = (n−1)</th><th>P = 0,90</th><th>P = 0,95</th><th>P = 0,99</th></tr></thead>
+        <tbody>
+          <tr><td class="k-col">1</td><td>6,31</td><td>12,7</td><td>63,7</td></tr>
+          <tr><td class="k-col">2</td><td>2,92</td><td>4,30</td><td>9,92</td></tr>
+          <tr><td class="k-col">3</td><td>2,35</td><td>3,18</td><td>5,84</td></tr>
+          <tr><td class="k-col">4</td><td>2,13</td><td>2,78</td><td>4,60</td></tr>
+          <tr><td class="k-col">5</td><td>2,01</td><td>2,57</td><td>4,03</td></tr>
+          <tr><td class="k-col">6</td><td>1,94</td><td>2,45</td><td>3,71</td></tr>
+          <tr><td class="k-col">7</td><td>1,89</td><td>2,36</td><td>3,50</td></tr>
+          <tr><td class="k-col">8</td><td>1,86</td><td>2,31</td><td>3,36</td></tr>
+          <tr><td class="k-col">9</td><td>1,83</td><td>2,26</td><td>3,25</td></tr>
+          <tr><td class="k-col">10</td><td>1,81</td><td>2,23</td><td>3,17</td></tr>
+          <tr><td class="k-col">16</td><td>1,75</td><td>2,12</td><td>2,92</td></tr>
+          <tr><td class="k-col">∞</td><td>1,64</td><td>1,96</td><td>2,58</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Test Q Dixon -->
+  <div class="card">
+    <h3>3. Loại sai số thô — Chuẩn Dixon (Test Q)</h3>
+    <div class="formula-box">
+      <div class="formula-row">
+        <span class="sym">Q_tn</span><span class="eq">=</span> |x₁ − x₂| / (x_max − x_min)
+      </div>
+    </div>
+    <div style="overflow-x:auto; margin:12px 0">
+      <table class="test-table">
+        <thead><tr><th>n</th><th>P = 0,90</th><th>P = 0,95</th><th>P = 0,99</th></tr></thead>
+        <tbody>
+          <tr><td class="k-col">3</td><td>0,89</td><td>0,94</td><td>0,99</td></tr>
+          <tr><td class="k-col">4</td><td>0,68</td><td>0,77</td><td>0,89</td></tr>
+          <tr><td class="k-col">5</td><td>0,56</td><td>0,64</td><td>0,76</td></tr>
+          <tr><td class="k-col">6</td><td>0,48</td><td>0,56</td><td>0,70</td></tr>
+          <tr><td class="k-col">7</td><td>0,43</td><td>0,51</td><td>0,64</td></tr>
+          <tr><td class="k-col">8</td><td>0,40</td><td>0,48</td><td>0,58</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="decision-box">
+      <div class="decision keep">Q_lt &gt; Q_tn : <strong>Giữ</strong> số liệu</div>
+      <div class="decision reject">Q_lt &lt; Q_tn : <strong>Loại bỏ</strong> số liệu</div>
+    </div>
+    <p class="note" style="margin-top:10px">Ví dụ Vitamin B1: giá trị nghi ngờ 126,7 mg. Tại P=0,95: Q_lt = 0,56 > Q_tn → giữ. Tại P=0,90: Q_lt = 0,48 &lt; Q_tn → loại bỏ.</p>
+  </div>
+
+  <!-- Bảng kiểm định T loại thô -->
+  <div class="card">
+    <h3>4. Loại sai số thô — Bảng kiểm định T</h3>
+    <div class="formula-box">
+      <div class="formula-row">
+        <span class="sym">T_tn</span><span class="eq">=</span> (X_max − X̄) / SD &nbsp;|&nbsp; T_tn = (X̄ − X_min) / SD
+      </div>
+    </div>
+    <div style="overflow-x:auto; margin:12px 0">
+      <table class="test-table">
+        <thead><tr><th>n</th><th>T_lt</th><th>n</th><th>T_lt</th></tr></thead>
+        <tbody>
+          <tr><td class="k-col">3</td><td>1,412</td><td class="k-col">11</td><td>2,343</td></tr>
+          <tr><td class="k-col">4</td><td>1,689</td><td class="k-col">12</td><td>2,387</td></tr>
+          <tr><td class="k-col">5</td><td>1,869</td><td class="k-col">13</td><td>2,426</td></tr>
+          <tr><td class="k-col">6</td><td>1,996</td><td class="k-col">14</td><td>2,462</td></tr>
+          <tr><td class="k-col">7</td><td>2,093</td><td class="k-col">15</td><td>2,493</td></tr>
+          <tr><td class="k-col">8</td><td>2,172</td><td class="k-col">16</td><td>2,523</td></tr>
+          <tr><td class="k-col">9</td><td>2,237</td><td class="k-col">17</td><td>2,551</td></tr>
+          <tr><td class="k-col">10</td><td>2,294</td><td class="k-col">18</td><td>2,623</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="decision-box">
+      <div class="decision keep">T_tn &lt; T_lt : Số liệu <strong>được giữ lại</strong></div>
+      <div class="decision reject">T_tn &gt; T_lt : Số liệu <strong>bị loại trừ</strong></div>
+    </div>
+  </div>
+
+  <!-- Các bước đánh giá -->
+  <div class="card">
+    <h3>5. Các bước đánh giá kết quả phân tích</h3>
+    <ol class="step-list" style="margin-top:10px">
+      <li>Sắp xếp lại các số liệu theo thứ tự tăng dần</li>
+      <li>Loại trừ số liệu không phù hợp bằng chuẩn Q hay T</li>
+      <li>Tính giá trị trung bình X̄, SD, RSD</li>
+      <li>Xác định giới hạn tin cậy ε, khoảng tin cậy µ</li>
+      <li>Báo cáo kết quả: m = X̄ ± ε</li>
+      <li>So sánh 2 dãy số liệu: chuẩn F hoặc chuẩn T</li>
+    </ol>
+  </div>
+
+  <!-- Test F -->
+  <div class="card">
+    <h3>6. So sánh hai phương sai — Test F</h3>
+    <div class="formula-box">
+      <div class="formula-row">
+        Điều kiện: <span class="sym">S²_A ≥ S²_B</span>
+      </div>
+      <div class="formula-row">
+        <span class="sym">F_tn</span><span class="eq">=</span> S²_A / S²_B
+        <span style="margin-left:24px" class="excel">Excel: FTEST(rangeA; rangeB)</span>
+      </div>
+    </div>
+    <div class="decision-box">
+      <div class="decision keep">F_lt &gt; F_tn : <strong>Không có</strong> sự khác biệt độ lặp lại</div>
+      <div class="decision reject">F_lt &lt; F_tn : Độ lặp lại của A và B <strong>khác nhau</strong></div>
+    </div>
+  </div>
+
+  <!-- Test T so sánh TB -->
+  <div class="card">
+    <h3>7. So sánh hai số trung bình — Test T</h3>
+    <p style="margin-bottom:14px"><strong>Bước 1:</strong> So sánh hai phương sai S²_A và S²_B (dùng Test F)</p>
+
+    <p style="font-weight:700; margin-bottom:8px; color:var(--accent)">Trường hợp 1: Hai phương sai không khác nhau</p>
+    <div class="formula-box">
+      <div class="formula-row">
+        <span class="sym">SD_pool</span><span class="eq">=</span> √[(n_A−1)S²_A + (n_B−1)S²_B] / (n_A + n_B − 2)
+      </div>
+      <div class="formula-row">
+        <span class="sym">t_tn</span><span class="eq">=</span> |X̄_A − X̄_B| / [SD_pool × √(1/n_A + 1/n_B)]
+      </div>
+      <div class="formula-row">
+        <span class="excel">Excel: t-Test Two-Sample Assuming Equal Variances</span>
+      </div>
+    </div>
+
+    <p style="font-weight:700; margin:16px 0 8px; color:var(--accent)">Trường hợp 2: Hai phương sai khác nhau</p>
+    <div class="formula-box">
+      <div class="formula-row">
+        <span class="sym">t_tn</span><span class="eq">=</span> |X̄_A − X̄_B| / √(S²_A/n_A + S²_B/n_B)
+      </div>
+      <div class="formula-row">
+        <span class="excel">Excel: t-Test Two-Sample Assuming Unequal Variances</span>
+      </div>
+    </div>
+    <p class="note">Trong MS Excel: t_tn = <em>t Stat</em>; t_lt = <em>t Critical two-tail</em></p>
+  </div>
+</section>
+
+<!-- ── CHƯƠNG TRÌNH ── -->
+<section class="section" id="chuong-trinh">
+  <div class="section-header">
+    <span class="section-num">08</span>
+    <h2>Chương Trình Khung</h2>
+  </div>
+
+  <div class="card">
+    <h3>HPT 1 — Hóa Phân Tích Cổ Điển</h3>
+    <table class="prog-table" style="margin-top:12px">
+      <thead><tr><th>STT</th><th>Nội dung bài học</th><th>Giảng viên</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Đại cương, Xử lý số liệu phân tích</td><td class="gv">PGS. Vĩnh Định</td></tr>
+        <tr><td>2</td><td>Nồng độ dung dịch</td><td class="gv">TS. Nguyên H Lạc Thủy</td></tr>
+        <tr><td>3</td><td>Cân bằng HH và phản ứng dùng trong HPT</td><td class="gv">TS. Ngô Thanh Diệp</td></tr>
+        <tr><td>4</td><td>Phương pháp phân tích khối lượng</td><td class="gv">TS. Phan Thanh Dũng</td></tr>
+        <tr><td>5</td><td>Đại cương về PP phân tích thể tích</td><td class="gv">TS. Nguyên H Lạc Thủy</td></tr>
+        <tr><td>6</td><td>Phương pháp acid - base</td><td class="gv">TS. Phan Thanh Dũng</td></tr>
+        <tr><td>7</td><td>Phương pháp oxy hóa khử</td><td class="gv">PGS. Võ T Bạch Huệ</td></tr>
+        <tr><td>8</td><td>Phương pháp tạo kết tủa</td><td class="gv">PGS. Nguyễn Đức Tuấn</td></tr>
+        <tr><td>9</td><td>Phương pháp tạo phức</td><td class="gv">PGS. Vĩnh Định</td></tr>
+        <tr><td>10</td><td>Ôn tập / Thực hành</td><td class="gv">TS. Phan Thanh Dũng</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>HPT 2 — Hóa Phân Tích Công Cụ</h3>
+    <table class="prog-table" style="margin-top:12px">
+      <thead><tr><th>STT</th><th>Nội dung bài học</th><th>Giảng viên</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Chuẩn độ điện thế</td><td class="gv">PGS. Vĩnh Định</td></tr>
+        <tr><td>2</td><td>Chuẩn độ Ampe</td><td class="gv">TS. Phan văn Hồ Nam</td></tr>
+        <tr><td>3</td><td>Đại cương quang phổ</td><td class="gv">PGS. Võ T Bạch Huệ</td></tr>
+        <tr><td>4</td><td>Quang phổ UV-Vis</td><td class="gv">TS. Ng Hữu lạc Thủy</td></tr>
+        <tr><td>5</td><td>Quang phổ IR</td><td class="gv">PGS. Vĩnh Định</td></tr>
+        <tr><td>6</td><td>Quang phổ huỳnh quang</td><td class="gv">PGS. Vĩnh Định</td></tr>
+        <tr><td>7</td><td>Quang phổ nguyên tử</td><td class="gv">PGS. Vĩnh Định</td></tr>
+        <tr><td>8</td><td>Các phương pháp chiết tách</td><td class="gv">PGS. Nguyễn Đức Tuấn</td></tr>
+        <tr><td>9</td><td>Đại cương sắc ký</td><td class="gv">PGS. Nguyễn Đức Tuấn</td></tr>
+        <tr><td>10</td><td>SKLM – SKC – SKG</td><td class="gv">PGS. Nguyễn Đức Tuấn</td></tr>
+        <tr><td>11</td><td>SKLHNC</td><td class="gv">TS. Phan Thanh Dũng</td></tr>
+        <tr><td>12</td><td>SKK</td><td class="gv">PGS. Nguyễn Đức Tuấn</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <p>Đại Cương Hóa Phân Tích · Tài liệu học tập · Khoa Dược</p>
+</footer>
+
+</body>
+</html>
